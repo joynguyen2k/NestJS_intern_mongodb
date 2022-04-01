@@ -17,23 +17,30 @@ export class TaskService  {
         const {status, search}= filterDto;
         console.log('status',status);
         console.log('search',search);
+        let result
         if(status){
-            return await this.model.find({
+             result= await this.model.find({
                 where: {status:  `%${status}%`}
             })
+            console.log('status 1',result);
         }
         if(search){
-            return await this.model.find({
+             result = await this.model.find({
                 where:{
                     $or:[
-                        {title: `%${search}%`},
-                        {description: `%${search}%`},
+                        {title:{ $regex: `${search}` }},
+                        {description: { $regex: `${search}` }},
 
                     ]
                 }
             })
+            console.log('search 1',result)
         }
-        // return result;
+        // if(!search && !status) {
+        //     result= await this.model.find({})
+        //     // console.log('result', result)
+        // }
+        return result;
     }
     async getTaskById(id: string): Promise<Task>{
         const task = await this.model.findOne({ id});
