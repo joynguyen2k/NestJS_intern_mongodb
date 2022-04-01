@@ -9,10 +9,10 @@ export type UserDocument = User & Document;
 @Schema()
 export class User{
     @Prop({
-        required: true,
-        unique: true,    
+        // required: true,
+        // unique: true,    
     })
-    username!: string;
+    username: string;
     @Prop()
     password: string;
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }] })
@@ -20,4 +20,3 @@ export class User{
 
 }
 export const UserSchema = SchemaFactory.createForClass(User);
-UserSchema.index({ username: 1 }, { unique: true });

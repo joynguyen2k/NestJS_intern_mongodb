@@ -3,23 +3,24 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schemas/user.schema';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './jwt.strategy';
 
 
 @Module({
-  providers: [AuthService],
-  controllers: [AuthController],
   imports: [
-    MongooseModule.forFeature([{name:User.name, schema: UserSchema }]),
-    // MongooseModule.forFeatureAsync([
-    //   {
-    //     name: User.name,
-    //     useFactory: () => {
-    //       const schema = UserSchema;
-    //       schema.plugin(require('mongoose-unique-validator'), { message: 'your custom message' }); // or you can integrate it without the options   schema.plugin(require('mongoose-unique-validator')
-    //       return schema;
-    //     },
-    //   },
-    // ]),
+    PassportModule.register({defaultStrategy:'jwt'}),
+    JwtModule.register({
+      secret: 'topSecret51',
+      signOptions:{
+        expiresIn: 3600
+      }
+    }),
+    MongooseModule.forFeature([{name:User.name, schema: UserSchema }]),  
   ],
+  providers: [AuthService, JwtStrategy],
+  controllers: [AuthController],
+  exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}
